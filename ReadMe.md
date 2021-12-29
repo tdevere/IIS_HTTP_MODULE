@@ -1,20 +1,28 @@
 # Example Http Module for IIS
 ## Scenario: Avoid Account Lockout Under Basic Authentication
 
-### Configuration 
+### Build Steps
+* Clone the repo
+* Complie the DLL
+~~~
+	csc /t:library HttpModuleBasicAuthCheck.cs -out:IIS_HTTP_MODULE.dll
+~~~
+* Add the complied module IIS_HTTP_MODULE.dll to the Application Bin folder for the Web Application
+
+### IIS Configuration 
 
 * The IIS Application pool should be configured with Inegrated Pipeline. If not, the registration of the Http Module must be moved to system.Web element of web.config.
 * IIS Authentication should be configured to use Basic Auth for this example
 * Edit the Application Web.Configuration file to include the following
 ~~~
-  <system.webServer>
-	  <modules>
-		  <add name="HttpModuleBasicAuthCheck" type="IIS_HTTP_MODULE.HttpModuleBasicAuthCheck"/>
-	  </modules>
-  </system.webServer>
+	<system.webServer>
+		<modules>
+			<add name="HttpModuleBasicAuthCheck" type="IIS_HTTP_MODULE.HttpModuleBasicAuthCheck"/>
+		</modules>
+	</system.webServer>
 ~~~
 
-* Add the complied module IIS_HTTP_MODULE.dll to the Application Bin folder for the Web Application
+
 * Perform an IISReset
 
 ### Validation
