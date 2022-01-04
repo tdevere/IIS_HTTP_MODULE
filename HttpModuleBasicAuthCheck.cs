@@ -34,7 +34,8 @@ namespace IIS_HTTP_MODULE
                     {
                         if (!IsValidBasichHash(basichVal))
                         {
-                            context.Request.Abort();
+                            //context.Request.Abort();
+                            context.Response.StatusCode = 401;
                         }
                     }
                 }
