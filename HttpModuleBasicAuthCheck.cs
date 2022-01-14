@@ -17,28 +17,42 @@ namespace IIS_HTTP_MODULE
 
         public void Init(HttpApplication context)
         {
-            context.BeginRequest += Context_BeginRequest;            
+            context.BeginRequest += Context_BeginRequest;
         }
 
         private void Context_BeginRequest(object sender, EventArgs e)
         {
-            //Log operation goes here    
-            HttpContext context = ((HttpApplication)sender).Context;
-
-            foreach (string key in context.Request.Headers.Keys)
+            Debug.WriteLine("BEGIN: Context_BeginRequest");
+            try
             {
-                if (key == "Authorization")
+                //Log operation goes here    
+                HttpContext context = ((HttpApplication)sender).Context;
+
+                foreach (string key in context.Request.Headers.Keys)
                 {
-                    string basichVal = context.Request.Headers["Authorization"];
-                    if (basichVal != null)
+                    if (key == "Authorization")
                     {
-                        if (!IsValidBasichHash(basichVal))
+                        string basichVal = context.Request.Headers["Authorization"];
+                        if (basichVal != null)
                         {
-                            //context.Request.Abort();
-                            context.Response.StatusCode = 401;
+                            if (!IsValidBasichHash(basichVal))
+                            {
+                                Debug.WriteLine(@"Not a valid domain\username:password");
+                                //May want to follow up with this HttpContext.Current.ApplicationInstance.CompleteRequest
+                                context.Response.End(); //I left out the End Request operation                                
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Context_BeginRequest Threw Exception");
+                Debug.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Debug.WriteLine("END: Context_BeginRequest");
             }
         }
 
